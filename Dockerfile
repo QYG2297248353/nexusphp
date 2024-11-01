@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -y \
     && pecl install redis \
     && docker-php-ext-enable redis
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 ENV PROJECT_SOURCE_PATH=/usr/src/nexusphp
 ENV ROOT_PATH=/var/www/html
 ENV RUN_PATH=${ROOT_PATH}/public
