@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     && pecl install redis \
     && docker-php-ext-enable redis
 
-ENV PROJECT_SOURCE_PATH=/usr/src/project
+ENV PROJECT_SOURCE_PATH=/usr/src/nexusphp
 ENV ROOT_PATH=/var/www/html
 ENV RUN_PATH=${ROOT_PATH}/public
 ENV PHP_USER=www-data
@@ -32,10 +32,16 @@ RUN mkdir -p $PROJECT_SOURCE_PATH $RUN_PATH && chown -R $PHP_USER:$PHP_USER $PRO
 
 COPY . $PROJECT_SOURCE_PATH
 
+WORKDIR $PROJECT_SOURCE_PATH
+
+RUN composer install
+
+RUN cp -R nexus/Install/install public/
+
+RUN chown -R $PHP_USER:$PHP_USER $ROOT_PATH
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-WORKDIR $ROOT_PATH
 
 CMD ["/entrypoint.sh"]
