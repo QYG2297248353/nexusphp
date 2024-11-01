@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libgmp-dev \
     libjpeg-dev \
     libpng-dev \
+    libcurl4-openssl-dev \
     supervisor \
     && docker-php-ext-install -j$(nproc) \
     bcmath \
