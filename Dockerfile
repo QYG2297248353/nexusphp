@@ -23,11 +23,14 @@ RUN apt-get update && apt-get install -y \
     && pecl install redis \
     && docker-php-ext-enable redis
 
+ENV PROJECT_SOURCE_PATH=/usr/src/project
 ENV ROOT_PATH=/var/www/html
 ENV RUN_PATH=${ROOT_PATH}/public
 ENV PHP_USER=www-data
 
-RUN mkdir -p $ROOT_PATH $RUN_PATH /data && chown -R $PHP_USER:$PHP_USER $ROOT_PATH $RUN_PATH /data
+RUN mkdir -p $PROJECT_SOURCE_PATH $RUN_PATH && chown -R $PHP_USER:$PHP_USER $PROJECT_SOURCE_PATH $ROOT_PATH
+
+COPY . $PROJECT_SOURCE_PATH
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
