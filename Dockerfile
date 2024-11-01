@@ -1,7 +1,6 @@
-FROM php:8.1-fpm
+FROM php:8.1-apache
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
     libfreetype6-dev \
     libjpeg-dev \
     libpng-dev \
@@ -12,25 +11,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     cron \
     supervisor \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+       gd \
+       bcmath \
+       curl \
+       mbstring \
+       openssl \
+       pdo_mysql \
+       tokenizer \
+       xml \
+       mysqli \
+       redis \
+       sockets \
+       posix \
+       gmp \
+       opcache \
     && rm -rf /var/lib/apt/lists/*
-
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd
-
-RUN docker-php-ext-install -j$(nproc) \
-    bcmath \
-    curl \
-    mbstring \
-    openssl \
-    pdo_mysql \
-    tokenizer \
-    xml \
-    mysqli \
-    redis \
-    sockets \
-    posix \
-    gmp \
-    opcache
 
 ENV ROOT_PATH="/var/www/html"
 ENV WORK_DIR="${ROOT_PATH}/public"
@@ -42,5 +39,9 @@ COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
 COPY nexus-queue.conf /etc/supervisor/conf.d/nexus-queue.conf
+
+RUN echo "DocumentRoot ${ROOT_PATH}/public" >> /etc/apache2/apache2.conf
+
+RUN a2enmod rewrite
 
 ENTRYPOINT ["/usr/local/bin/start.sh"]
