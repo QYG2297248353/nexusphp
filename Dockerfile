@@ -15,24 +15,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
-       bcmath \
-       ctype \
-       curl \
-       fileinfo \
-       json \
-       mbstring \
-       openssl \
-       pdo_mysql \
-       tokenizer \
-       xml \
-       mysqli \
-       gd \
-       redis \
-       sockets \
-       posix \
-       gmp \
-       opcache
+    && docker-php-ext-install gd
+
+RUN php -m
+
+RUN docker-php-ext-install -j$(nproc) \
+    bcmath \
+    ctype \
+    curl \
+    fileinfo \
+    json \
+    mbstring \
+    openssl \
+    pdo_mysql \
+    tokenizer \
+    xml \
+    mysqli \
+    redis \
+    sockets \
+    posix \
+    gmp \
+    opcache
 
 ENV ROOT_PATH="/var/www/html"
 ENV WORK_DIR="${ROOT_PATH}/public"
