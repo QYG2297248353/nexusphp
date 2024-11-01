@@ -11,22 +11,13 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libcurl4-openssl-dev \
     supervisor \
+    && docker-php-ext-configure gd --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     bcmath \
-    ctype \
-    curl \
-    fileinfo \
-    json \
-    mbstring \
-    openssl \
-    pdo_mysql \
-    tokenizer \
-    xml \
-    mysqli \
     gd \
+    mysqli \
     pcntl \
     sockets \
-    posix \
     gmp \
     opcache \
     && pecl install redis \
