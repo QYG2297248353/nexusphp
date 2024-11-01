@@ -1,47 +1,45 @@
-FROM php:8.1-apache
+FROM php:8.2-fpm
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libfreetype6-dev \
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    libzip-dev \
+    libxml2-dev \
+    libonig-dev \
+    libgmp-dev \
     libjpeg-dev \
     libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    libzip-dev \
-    zip \
-    unzip \
-    cron \
     supervisor \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
-       gd \
-       bcmath \
-       curl \
-       mbstring \
-       openssl \
-       pdo_mysql \
-       tokenizer \
-       xml \
-       mysqli \
-       redis \
-       sockets \
-       posix \
-       gmp \
-       opcache \
-    && rm -rf /var/lib/apt/lists/*
+    bcmath \
+    ctype \
+    curl \
+    fileinfo \
+    json \
+    mbstring \
+    openssl \
+    pdo_mysql \
+    tokenizer \
+    xml \
+    mysqli \
+    gd \
+    pcntl \
+    sockets \
+    posix \
+    gmp \
+    opcache \
+    && pecl install redis \
+    && docker-php-ext-enable redis
 
-ENV ROOT_PATH="/var/www/html"
-ENV WORK_DIR="${ROOT_PATH}/public"
-ENV PHP_USER="www-data"
+ENV ROOT_PATH=/var/www/html
+ENV RUN_PATH=${ROOT_PATH}/public
+ENV PHP_USER=www-data
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN mkdir -p $ROOT_PATH $RUN_PATH /data && chown -R $PHP_USER:$PHP_USER $ROOT_PATH $RUN_PATH /data
 
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-COPY nexus-queue.conf /etc/supervisor/conf.d/nexus-queue.conf
+WORKDIR $ROOT_PATH
 
-RUN echo "DocumentRoot ${ROOT_PATH}/public" >> /etc/apache2/apache2.conf
-
-RUN a2enmod rewrite
-
-ENTRYPOINT ["/usr/local/bin/start.sh"]
+CMD ["/entrypoint.sh"]
