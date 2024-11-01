@@ -17,14 +17,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd
 
-RUN php -m
-
 RUN docker-php-ext-install -j$(nproc) \
     bcmath \
-    ctype \
     curl \
-    fileinfo \
-    json \
     mbstring \
     openssl \
     pdo_mysql \
