@@ -1,6 +1,6 @@
 FROM php:8.1-fpm
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
@@ -12,8 +12,27 @@ RUN apt-get update && apt-get install -y \
     unzip \
     cron \
     supervisor \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) bcmath ctype curl fileinfo json mbstring openssl pdo_mysql tokenizer xml mysqli gd redis sockets posix gmp opcache
+    && rm -rf /var/lib/apt/lists/*
+
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+       bcmath \
+       ctype \
+       curl \
+       fileinfo \
+       json \
+       mbstring \
+       openssl \
+       pdo_mysql \
+       tokenizer \
+       xml \
+       mysqli \
+       gd \
+       redis \
+       sockets \
+       posix \
+       gmp \
+       opcache
 
 ENV ROOT_PATH="/var/www/html"
 ENV WORK_DIR="${ROOT_PATH}/public"
