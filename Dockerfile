@@ -1,51 +1,47 @@
-FROM php:8.2-fpm
+FROM php:8.1-fpm
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
+RUN apt-get update && \
+    apt-get install -y \
     git \
-    libpq-dev \
-    libzip-dev \
-    libxml2-dev \
-    libonig-dev \
-    libgmp-dev \
-    libjpeg-dev \
-    libpng-dev \
-    libcurl4-openssl-dev \
-    supervisor \
-    && docker-php-ext-configure gd --with-jpeg \
-    && docker-php-ext-install -j$(nproc) \
+    unzip \
+    supervisor && \
+    docker-php-ext-install \
     bcmath \
-    gd \
+    ctype \
+    curl \
+    fileinfo \
+    json \
+    mbstring \
+    openssl \
+    pdo_mysql \
+    tokenizer \
+    xml \
     mysqli \
+    gd \
     pcntl \
     sockets \
+    posix \
     gmp \
-    opcache \
-    ftp \
-    && pecl install redis \
-    && docker-php-ext-enable redis
+    opcache && \
+    pecl install redis && docker-php-ext-enable redis
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-ENV PROJECT_SOURCE_PATH=/usr/src/nexusphp
-ENV ROOT_PATH=/var/www/html
-ENV RUN_PATH=${ROOT_PATH}/public
-ENV PHP_USER=www-data
+WORKDIR /var/www/html
 
-RUN mkdir -p $PROJECT_SOURCE_PATH $RUN_PATH && chown -R $PHP_USER:$PHP_USER $PROJECT_SOURCE_PATH $ROOT_PATH
+COPY . /tmp/app
 
-COPY . $PROJECT_SOURCE_PATH
+RUN cp -R /tmp/app/nexus/Install/install /tmp/app/public/
 
-WORKDIR $PROJECT_SOURCE_PATH
+RUN cd /tmp/app && composer install --no-dev --optimize-autoloader
 
-RUN composer install
+COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-RUN cp -R nexus/Install/install public/
-
-RUN chown -R $PHP_USER:$PHP_USER $ROOT_PATH
-
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-CMD ["/entrypoint.sh"]
+RUN chown -R www-data:www-data /var/www/html
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+EXPOSE 9000
