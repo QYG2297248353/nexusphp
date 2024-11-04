@@ -7,7 +7,8 @@ RUN apt-get update && \
     supervisor \
     libcurl4-openssl-dev \
     libxml2-dev \
-    libsqlite3-dev && \
+    libsqlite3-dev \
+    zlib1g-dev && \
     docker-php-ext-install \
     bcmath \
     pdo_mysql \
