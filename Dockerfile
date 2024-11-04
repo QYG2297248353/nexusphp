@@ -5,23 +5,16 @@ RUN apt-get update && \
     git \
     unzip \
     supervisor \
-    libcurl4-openssl-dev && \
+    libcurl4-openssl-dev \
+    libxml2-dev \
+    libsqlite3-dev && \
     docker-php-ext-install \
     bcmath \
-    ctype \
-    curl \
-    fileinfo \
-    json \
-    mbstring \
-    openssl \
     pdo_mysql \
-    tokenizer \
-    xml \
     mysqli \
     gd \
     pcntl \
     sockets \
-    posix \
     gmp \
     opcache && \
     pecl install redis && docker-php-ext-enable redis
