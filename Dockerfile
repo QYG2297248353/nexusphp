@@ -8,7 +8,15 @@ RUN apt-get update && \
     libcurl4-openssl-dev \
     libxml2-dev \
     libsqlite3-dev \
-    zlib1g-dev && \
+    libzip-dev \
+    libpq-dev \
+    libonig-dev \
+    libgmp-dev \
+    zlib1g-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install \
     bcmath \
     pdo_mysql \
