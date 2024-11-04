@@ -30,7 +30,7 @@ RUN apt-get update && \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
+WORKDIR /var/www/html/public
 
 COPY . /tmp/app
 
