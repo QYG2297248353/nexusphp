@@ -1,0 +1,15 @@
+<ifModule mod_rewrite.c>
+RewriteEngine on
+RewriteRule \.svn/ - [F]
+RewriteCond %{QUERY_STRING}  ^(.+)$
+RewriteRule ^(.*)forums/$ $1forums.php?action=viewtopic&%1 [L]
+
+RewriteRule ^(.*)forums/$ $1forums.php?action=viewtopic
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule !^nexus\.php$ nexus.php [L]
+
+</ifModule>
+Options FollowSymLinks
+Order allow,deny
+Allow from all
