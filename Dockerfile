@@ -35,15 +35,15 @@ WORKDIR /var/www/html/public
 COPY . /tmp/app
 
 RUN cp -R /tmp/app/nexus/Install/install /tmp/app/public/
-
 RUN cd /tmp/app && composer install --no-dev --optimize-autoloader
 
+COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
-RUN chown -R www-data:www-data /var/www/html
+RUN chmod +x /entrypoint.sh && \
+    chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html
 
 ENTRYPOINT ["/entrypoint.sh"]
 
