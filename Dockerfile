@@ -32,7 +32,7 @@ RUN a2enmod rewrite
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html/public
+WORKDIR /var/www/html
 
 COPY . /tmp/app
 
@@ -45,7 +45,8 @@ COPY ./entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh && \
     chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html
+    chmod -R 755 /var/www/html && \
+    chmod -R 777 /tmp
 
 ENTRYPOINT ["/entrypoint.sh"]
 
