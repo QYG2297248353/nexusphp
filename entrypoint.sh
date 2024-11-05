@@ -11,6 +11,6 @@ else
     echo "请尽快完成站点初始化工作"
 fi
 
-service php8.1-fpm start
+php-fpm -F &
 service nginx start
 exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
