@@ -1,10 +1,11 @@
-FROM php:8.1-apache
+FROM php:8.1-fpm
 
 RUN apt-get update && \
     apt-get install -y \
     git \
     unzip \
     supervisor \
+    nginx \
     libcurl4-openssl-dev \
     libxml2-dev \
     libsqlite3-dev \
@@ -28,8 +29,6 @@ RUN apt-get update && \
     opcache && \
     pecl install redis && docker-php-ext-enable redis
 
-RUN a2enmod rewrite
-
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
@@ -39,7 +38,7 @@ COPY . /tmp/app
 RUN cp -R /tmp/app/nexus/Install/install /tmp/app/public/
 RUN cd /tmp/app && composer install --no-dev --optimize-autoloader
 
-COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY ./nginx.conf /etc/nginx/sites-available/default
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./entrypoint.sh /entrypoint.sh
 
