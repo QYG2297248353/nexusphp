@@ -50,3 +50,5 @@ RUN chmod +x /entrypoint.sh && \
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 80
+
+VOLUME ["/var/www/html", "/var/www/html/torrents", "/var/www/html/bitbucket", "/var/www/html/attachments"]
