@@ -103,6 +103,7 @@ class UpdateUserSeedingLeechingTime implements ShouldQueue
             "$logPrefix, [DONE], update user count: %s, result: %s, cost time: %s seconds",
             $count, var_export($result, true), $costTime
         ));
+        do_log("$logPrefix, sql: $sql", "debug");
     }
 
     /**
