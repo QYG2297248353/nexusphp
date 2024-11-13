@@ -13,6 +13,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            mediacms/mediacms
+          tags: |
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+          labels: |
+            org.opencontainers.image.title=MediaCMS
+            org.opencontainers.image.description=MediaCMS is a modern, fully featured open source video and media CMS, written in Python/Django and React, featuring a REST API.
+            org.opencontainers.image.vendor=MediaCMS
+            org.opencontainers.image.url=https://mediacms.io/
+            org.opencontainers.image.source=https://github.com/mediacms-io/mediacms
+            org.opencontainers.image.licenses=AGPL-3.0
+
       - name: Print GitHub context
         run: |
           echo "repository: ${{ github.repository }}"
@@ -46,7 +65,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            qyg2297248353/nexusphp:${{ github.ref_name }}
-            qyg2297248353/nexusphp:latest
-            ghcr.io/qyg2297248353/nexusphp:${{ github.ref_name }}
-            ghcr.io/qyg2297248353/nexusphp:latest
+            qyg2297248353/mediacms:${{ github.ref_name }}
+            qyg2297248353/mediacms:latest
+            ghcr.io/qyg2297248353/mediacms:${{ github.ref_name }}
+            ghcr.io/qyg2297248353/mediacms:latest
