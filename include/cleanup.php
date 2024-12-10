@@ -249,7 +249,8 @@ function docleanup($forceAll = 0, $printProgress = false) {
 	set_time_limit(0);
 	ignore_user_abort(1);
 	$now = time();
-	$nowStr = \Carbon\Carbon::now()->toDateTimeString();
+    $carbonNow = \Carbon\Carbon::now();
+	$nowStr = $carbonNow->toDateTimeString();
 	do_log("start docleanup(), forceAll: $forceAll, printProgress: $printProgress, now: $now, " . date('Y-m-d H:i:s', $now));
 
 //Priority Class 1: cleanup every 15 mins
@@ -299,6 +300,10 @@ function docleanup($forceAll = 0, $printProgress = false) {
 //			sql_query($sql);
 //		}
 //	}
+
+    //rest seed_points_per_hour
+    $seedPointsUpdatedAtMin = $carbonNow->subSeconds(2*intval($autoclean_interval_one))->toDateTimeString();
+    sql_query("update users set seed_points_per_hour = 0 where seed_points_updated_at < " . sqlesc($seedPointsUpdatedAtMin));
 
 	\App\Repositories\CleanupRepository::runBatchJobCalculateUserSeedBonus($requestId);
 
