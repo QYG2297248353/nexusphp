@@ -102,7 +102,11 @@ class Test extends Command
      */
     public function handle()
     {
-        $this->info("haha");
+        $today = Carbon::today();
+        $yesterday = Carbon::yesterday();
+        $tomorrow = Carbon::tomorrow();
+        $diff = $tomorrow->diffInDays();
+        dd($today, $tomorrow, $diff);
     }
 
 }
